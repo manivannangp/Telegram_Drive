@@ -16,11 +16,10 @@ import { fileActions, useFileAction } from "@/hooks/useFileAction";
 import { chainLinks, isMobile } from "@/utils/common";
 import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
 import { filesQueryOptions, sessionQueryOptions } from "@/utils/queryOptions";
-import { useFileUploadStore, useModalStore } from "@/utils/stores";
+import { useModalStore } from "@/utils/stores";
 
 import { FileOperationModal } from "./modals/FileOperation";
 import PreviewModal from "./modals/Preview";
-import { Upload } from "./Upload";
 
 let firstRender = true;
 
@@ -49,14 +48,11 @@ export const DriveFileBrowser = memo(() => {
 
   const queryOptions = filesQueryOptions(
     Object.keys(search).length > 0 ? { ...params, filter: search } : params,
-    session?.hash!,
   );
 
   const modalOpen = useModalStore((state) => state.open);
 
   const modalOperation = useModalStore((state) => state.operation);
-
-  const openUpload = useFileUploadStore((state) => state.uploadOpen);
 
   const { breakpoint } = useBreakpoint(BREAKPOINTS);
 
@@ -67,7 +63,7 @@ export const DriveFileBrowser = memo(() => {
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(queryOptions);
 
-  const actionHandler = useFileAction(params, session!);
+  const actionHandler = useFileAction(params);
 
   const folderChain = useMemo(() => {
     if (params.type === "my-drive") {
@@ -137,7 +133,6 @@ export const DriveFileBrowser = memo(() => {
       {modalOperation === FbActions.OpenFiles.id && modalOpen && (
         <PreviewModal session={session!} files={files} />
       )}
-      {openUpload && <Upload queryKey={queryOptions.queryKey} />}
     </div>
   );
 });

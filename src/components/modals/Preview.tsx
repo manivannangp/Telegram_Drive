@@ -106,7 +106,6 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
 
 export default memo(function PreviewModal({
   files: fileProp,
-  session,
 }: {
   files: FileData[];
   session: Session;
@@ -155,7 +154,7 @@ export default memo(function PreviewModal({
 
   const handleClose = useCallback(() => modalActions.setOpen(false), []);
 
-  const assetUrl = mediaUrl(id, name, session.hash);
+  const assetUrl = mediaUrl(id, name);
 
   const renderPreview = useCallback(() => {
     if (previewType) {

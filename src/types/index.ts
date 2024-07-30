@@ -56,11 +56,12 @@ export type Settings = {
 };
 
 export type Session = {
-  name: string;
-  userName: string;
-  userId: number;
-  isPremium: boolean;
-  hash: string;
+  user: {
+    id: string;
+    name?: string | null;
+    email: string | null;
+    image?: string | null;
+  };
   expires: string;
 };
 
@@ -129,6 +130,5 @@ export type FilterQuery = {
   path?: string;
   query?: string;
   updatedAt?: string;
-  deepSearch?: boolean;
   parentId?: string;
 };

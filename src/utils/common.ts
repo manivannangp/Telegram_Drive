@@ -98,16 +98,14 @@ export function extractPathParts(path: string): {
   };
 }
 
-export const mediaUrl = (id: string, name: string, sessionHash: string, download = false) => {
-  const host = window.location.origin;
-  return `${host}/api/files/${id}/${download ? "download" : "stream"}/${encodeURIComponent(
-    name,
-  )}?hash=${sessionHash}`;
+export const mediaUrl = (id: string, name: string, download = false) => {
+  const mediaPath = `${id}/${encodeURIComponent(name)}${download ? "?d=1" : ""}`;
+  return `${window.location.origin}/api/files/stream/${mediaPath}`;
 };
 
-export const profileUrl = (session: Session) => `/api/users/profile?photo=1&hash=${session.hash}`;
+export const profileUrl = (session: Session) => session.user?.image || "";
 
-export const profileName = (session: Session) => session.userName;
+export const profileName = (session: Session) => session.user?.name || "";
 
 export function bytesToGB(bytes: number) {
   const gb = bytes / 1024 ** 3;

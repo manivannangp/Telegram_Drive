@@ -27,7 +27,7 @@ import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults"
 import { getPreviewType, preview } from "./getPreviewType";
 import http from "./http";
 
-const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
+const mapFilesToFb = (files: SingleFile[]): FileData[] => {
   return files.map((item): FileData => {
     if (item.mimeType === "drive/folder") {
       return {
@@ -47,13 +47,10 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
 
     let thumbnailUrl = "";
     if (previewType === "image") {
-      if (settings.resizerHost) {
-        const url = new URL(mediaUrl(item.id, item.name, sessionHash));
-        url.searchParams.set("w", "360");
-        thumbnailUrl = settings.resizerHost
-          ? `${settings.resizerHost}/${url.host}${url.pathname}${url.search}`
-          : "";
-      }
+      const url = new URL(mediaUrl(item.id, item.name));
+      url.searchParams.set("w", "360");
+      const resizerHost = import.meta.env.VITE_RESIZER_HOST as string;
+      thumbnailUrl = resizerHost ? `${resizerHost}/${url.host}${url.pathname}${url.search}` : "";
     }
     return {
       id: item.id,
@@ -78,13 +75,7 @@ export const sessionQueryOptions = queryOptions({
   refetchOnWindowFocus: false,
 });
 
-export const sessionsQueryOptions = queryOptions({
-  queryKey: ["sessions"],
-  queryFn: async ({ signal }) =>
-    (await http.get<UserSession[]>("/api/users/sessions", { signal })).data,
-});
-
-export const filesQueryOptions = (params: QueryParams, sessionHash?: string) =>
+export const filesQueryOptions = (params: QueryParams) =>
   infiniteQueryOptions({
     queryKey: ["files", params],
     queryFn: fetchFiles(params),
@@ -93,10 +84,7 @@ export const filesQueryOptions = (params: QueryParams, sessionHash?: string) =>
       lastPage.meta.currentPage + 1 > lastPage.meta.totalPages
         ? undefined
         : lastPage.meta.currentPage + 1,
-    select: (data) =>
-      data.pages.flatMap((page) =>
-        page.files ? mapFilesToFb(page.files, sessionHash as string) : [],
-      ),
+    select: (data) => data.pages.flatMap((page) => (page.files ? mapFilesToFb(page.files) : [])),
   });
 
 export const uploadStatsQueryOptions = (days: number) =>
@@ -315,28 +303,6 @@ export const useDeleteFile = (queryKey: any[]) => {
     },
     onSuccess: () => {
       toast.success("File deleted successfully");
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
-    },
-  });
-};
-
-export const useDeleteSession = () => {
-  const queryClient = useQueryClient();
-  const queryKey = ["sessions"];
-  return useMutation({
-    mutationFn: async (id: string) => http.delete(`/api/users/sessions/${id}`),
-    onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previousSessions = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData<UserSession[]>(queryKey, (prev) =>
-        prev!.filter((val) => val.hash !== variables),
-      );
-      return { previousSessions };
-    },
-    onError: (_1, _2, context) => {
-      queryClient.setQueryData(queryKey, context?.previousSessions);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });

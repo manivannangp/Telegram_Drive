@@ -3,7 +3,6 @@ import type { FilterQuery } from "@/types";
 import { type NavigateOptions, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   Button,
-  Checkbox,
   CheckboxGroup,
   Input,
   FreeSoloPopover as Popover,
@@ -65,7 +64,6 @@ const defaultFilters = {
   fromDate: "",
   toDate: "",
   path: "",
-  deepSearch: false,
 };
 
 export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuProps) => {
@@ -115,10 +113,8 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
         } else if (key === "location" && value === "current" && pathname.includes("/my-drive")) {
           const path = pathname.split("/my-drive")[1] || "/";
           filterQuery.path = decodeURI(path);
-          filterQuery.deepSearch = data.deepSearch;
         } else if (key === "location" && value === "custom" && data.path) {
           filterQuery.path = data.path;
-          filterQuery.deepSearch = data.deepSearch;
         } else if (key === "query" && value) {
           filterQuery[key] = value;
         }
@@ -242,20 +238,6 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
                   </Radio>
                 ))}
               </RadioGroup>
-            )}
-          />
-          <Controller
-            name="deepSearch"
-            control={control}
-            render={({ field }) => (
-              <Checkbox
-                onChange={field.onChange}
-                isSelected={field.value}
-                name={field.name}
-                onBlur={field.onBlur}
-              >
-                Deep Search
-              </Checkbox>
             )}
           />
         </div>

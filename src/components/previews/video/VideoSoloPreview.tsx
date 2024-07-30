@@ -1,7 +1,6 @@
 import type React from "react";
-import { FC, forwardRef, memo, useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getRouteApi, useParams } from "@tanstack/react-router";
+import { forwardRef, memo, useEffect, useRef } from "react";
+import { getRouteApi } from "@tanstack/react-router";
 import { Button } from "@tw-material/react";
 import FlatColorIconsVlc from "~icons/flat-color-icons/vlc";
 import SolarPlayCircleBold from "~icons/solar/play-circle-bold";
@@ -10,7 +9,6 @@ import type ArtOption from "artplayer/types/option";
 import type { AspectRatio } from "artplayer/types/player";
 
 import { mediaUrl } from "@/utils/common";
-import { sessionQueryOptions } from "@/utils/queryOptions";
 
 import Player from "./ArtPlayer";
 
@@ -93,8 +91,7 @@ const fileRoute = getRouteApi("/_authenticated/watch/$id/$name");
 
 export const VideoSoloPreview = memo(() => {
   const { id, name } = fileRoute.useParams();
-  const { data: session } = useQuery(sessionQueryOptions);
-  const assetUrl = mediaUrl(id, name, session?.hash!);
+  const assetUrl = mediaUrl(id, name);
   return (
     <div className="relative mx-auto mt-4 max-w-4xl">
       <VideoPlayer className="aspect-[16/9]" videoName={name} videoUrl={assetUrl} />

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { QueryParams, Session } from "@/types";
+import type { QueryParams } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   defineFileAction,
@@ -19,7 +19,7 @@ import { mediaUrl, navigateToExternalUrl } from "@/utils/common";
 import { getSortState, SortOrder } from "@/utils/defaults";
 import http from "@/utils/http";
 import { usePreload } from "@/utils/queryOptions";
-import { useFileUploadStore, useModalStore } from "@/utils/stores";
+import { useModalStore } from "@/utils/stores";
 
 const CustomActions = {
   OpenInVLCPlayer: defineFileAction({
@@ -69,15 +69,12 @@ const CustomActions = {
 
 type FbActionFullUnion = (typeof CustomActions)[keyof typeof CustomActions] | FbActionUnion;
 
-export const useFileAction = (params: QueryParams, session: Session) => {
+export const useFileAction = (params: QueryParams) => {
   const queryClient = useQueryClient();
 
   const { preloadFiles } = usePreload();
 
   const actions = useModalStore((state) => state.actions);
-
-  const fileDialogOpen = useFileUploadStore((state) => state.actions.setFileDialogOpen);
-  const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen);
 
   return useCallback(() => {
     return async (data: MapFileActionsToData<FbActionFullUnion>) => {
@@ -121,7 +118,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           for (const file of selectedFiles) {
             if (!FileHelper.isDirectory(file)) {
               const { id, name } = file;
-              const url = mediaUrl(id, name, session.hash, true);
+              const url = mediaUrl(id, name, true);
               navigateToExternalUrl(url, false);
             }
           }
@@ -131,7 +128,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
           const { id, name } = fileToOpen;
-          const url = `vlc://${mediaUrl(id, name, session.hash)}`;
+          const url = `vlc://${mediaUrl(id, name)}`;
           navigateToExternalUrl(url, false);
           break;
         }
@@ -139,7 +136,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
           const { id, name } = fileToOpen;
-          const url = `potplayer://${mediaUrl(id, name, session.hash)}`;
+          const url = `potplayer://${mediaUrl(id, name)}`;
           navigateToExternalUrl(url, false);
           break;
         }
@@ -175,16 +172,14 @@ export const useFileAction = (params: QueryParams, session: Session) => {
         }
         case CustomActions.CopyDownloadLink.id: {
           const selections = data.state.selectedFilesForAction;
-          let clipboardText = "";
-          selections
+          const clipboardText = selections
             .filter((element) => !FileHelper.isDirectory(element))
-            .forEach((element, idx, arr) => {
-              const { id, name } = element;
-              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}${idx + 1 < arr.length ? "\n" : ""}`;
-            });
+            .map(({ id, name }) => mediaUrl(id, name, true))
+            .join("\n");
           navigator.clipboard.writeText(clipboardText);
           break;
         }
+
         case FbActions.MoveFiles.id: {
           const { files, target } = data.payload;
           const res = await http.post("/api/files/move", {
@@ -197,12 +192,6 @@ export const useFileAction = (params: QueryParams, session: Session) => {
               queryKey: ["files"],
             });
           }
-          break;
-        }
-
-        case FbActions.UploadFiles.id: {
-          fileDialogOpen(true);
-          uploadOpen(true);
           break;
         }
 

@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth/core": "^0.34.2",
+    "@hono/auth-js": "^1.0.10",
     "@monaco-editor/react": "^4.6.0",
     "@react-aria/i18n": "^3.12.1",
     "@tanstack/react-query": "^5.51.15",
-    "@tanstack/react-router": "1.45.14",
+    "@tanstack/react-router": "1.45.6",
     "@tw-material/file-browser": "^1.0.20",
     "@tw-material/framer-transitions": "^1.1.4",
     "@tw-material/react": "^1.1.21",
