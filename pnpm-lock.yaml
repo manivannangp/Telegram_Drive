@@ -15,9 +15,6 @@ importers:
       '@auth/core':
         specifier: ^0.34.2
         version: 0.34.2
-      '@hono/auth-js':
-        specifier: ^1.0.10
-        version: 1.0.10(@auth/core@0.34.2)(hono@4.5.3)(react@18.3.1)
       '@monaco-editor/react':
         specifier: ^4.6.0
         version: 4.6.0(monaco-editor@0.50.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -570,14 +567,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-
-  '@hono/auth-js@1.0.10':
-    resolution: {integrity: sha512-hnkZzPMHveX2GzX/zS53uP6OqzB6SCtJCaimXdjewCWWiNi4FFtv1jcsca3PV7haiaLKict5JPZWzfMq+t3Bzw==}
-    engines: {node: '>=18.4.0'}
-    peerDependencies:
-      '@auth/core': 0.*
-      hono: '>=3.*'
-      react: ^18.3.1
 
   '@iconify/json@2.2.232':
     resolution: {integrity: sha512-o1W5bNDuXTd3ugywfX9uRmhuJTKYOLhH4qk+eUpkR8WEYdTmMW+FSiFO5R2KqD94Tzoi8Ef8u/R7felU5xk3eQ==}
@@ -1994,10 +1983,6 @@ packages:
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
-  hono@4.5.3:
-    resolution: {integrity: sha512-r26WwwbKD3BAYdfB294knNnegNda7VfV1tVn66D9Kvl9WQTdrR+5eKdoeaQNHQcC3Gr0KBikzAtjd6VsRGVSaw==}
-    engines: {node: '>=16.0.0'}
-
   hotkeys-js@3.13.7:
     resolution: {integrity: sha512-ygFIdTqqwG4fFP7kkiYlvayZppeIQX2aPpirsngkv1xM1lP0piDY5QEh68nQnIKvz64hfocxhBaD/uK3sSK1yQ==}
 
@@ -3312,12 +3297,6 @@ snapshots:
       tslib: 2.6.3
     optionalDependencies:
       typescript: 5.5.4
-
-  '@hono/auth-js@1.0.10(@auth/core@0.34.2)(hono@4.5.3)(react@18.3.1)':
-    dependencies:
-      '@auth/core': 0.34.2
-      hono: 4.5.3
-      react: 18.3.1
 
   '@iconify/json@2.2.232':
     dependencies:
@@ -5387,8 +5366,6 @@ snapshots:
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
-
-  hono@4.5.3: {}
 
   hotkeys-js@3.13.7: {}
 

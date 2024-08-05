@@ -10,14 +10,13 @@ import http from "@/utils/http";
 import { sessionQueryOptions } from "@/utils/queryOptions";
 
 export function ProfileDropDown() {
-  const { data: session, refetch } = useQuery(sessionQueryOptions);
+  const { data: session } = useQuery(sessionQueryOptions);
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
   const signOut = useCallback(async () => {
-    const res = await http.post("/api/auth/logout");
-    refetch();
+    const res = await http.get("/api/auth/signout");
     if (res.status === 200) {
       queryClient.removeQueries();
       navigate({ to: "/login", replace: true });
